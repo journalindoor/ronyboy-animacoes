@@ -1,21 +1,48 @@
 var controller, ronyboySettings, loop;
-var tela = document.querySelector(".tela");
-var chao = document.querySelector(".chao");
+var screen = document.querySelector(".screen");
+var floor = document.querySelector(".floor");
+var floorHeight = floor.offsetHeight;
 var ronyboy = document.querySelector(".ronyboy");
-var x_velocity = 0;
+
+var gravity = 10;
+var friction = 0.9;
 
 ronyboySettings = {
-
-  moveRight: function(velocity){
-    x_velocity += velocity;
-    ronyboy.style.left = x_velocity + "px";
+  jumping: true,
+  x_axis:0,
+  y_axis:300,
+  speed:3,
+  position: ronyboy.getBoundingClientRect(),
+  moveJump: ()=>{
+    ronyboySettings.y_axis += 100;
+    ronyboySettings.jumping = true;
   },
-  moveLeft: function(velocity){
-    x_velocity -= velocity;
-    ronyboy.style.left = x_velocity + "px";
+  moveRight: (speed) => {
+    ronyboySettings.x_axis += speed;
+  },
+  moveLeft: (speed) => {
+    ronyboySettings.x_axis -= speed;
+  },
+  dontEscape: () =>{
+    console.log(ronyboySettings.x_axis);
+    if(ronyboySettings.x_axis <= 0){
+      ronyboySettings.x_axis = 0;
+    }
+  },
+  floorTouch: () => {
+    ronyboySettings.y_axis -= gravity;
+    if(ronyboySettings.y_axis <= floorHeight){
+      ronyboySettings.jumping = false;
+      ronyboySettings.y_axis = floorHeight;
+    }
+  },
+  exist: () => {
+    ronyboy.style.bottom = ronyboySettings.y_axis + "px";
+    ronyboy.style.left = ronyboySettings.x_axis + "px";
+    ronyboySettings.floorTouch();
+    ronyboySettings.dontEscape();
   }
-
-}
+};
 
 controller = {
   left: false,
@@ -38,18 +65,24 @@ controller = {
   },
 };
 
-loop = function () {
-  
+loop = () => {
+  if (controller.up && ronyboySettings.jumping == false) {
+    ronyboySettings.moveJump(20);
+  }
+
   if (controller.left) {
-    ronyboySettings.moveLeft(10);
+    ronyboySettings.moveLeft(ronyboySettings.speed);
   }
   if (controller.right) {
-    ronyboySettings.moveRight(10);
+    ronyboySettings.moveRight(ronyboySettings.speed);
+  }
+  if (controller.up && ronyboySettings.jumping == false) {
+    ronyboySettings.moveJump();
   }
 
+  ronyboySettings.exist();
   window.requestAnimationFrame(loop);
 };
-
 
 window.addEventListener("keydown", controller.keyListener);
 window.addEventListener("keyup", controller.keyListener);

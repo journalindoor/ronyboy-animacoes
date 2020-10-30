@@ -4,13 +4,13 @@ html {
   margin: 0;
 }
 
-.tela {
+.screen {
   background: cornflowerblue;
   width: 100%;
   height: 100%;
   position: relative;
 }
-.chao {
+.floor {
   background: gray;
   width: 100%;
   height: 40px;
