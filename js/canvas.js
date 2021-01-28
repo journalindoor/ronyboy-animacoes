@@ -14,8 +14,10 @@ ronyboySettings = {
   speed:3,
   position: ronyboy.getBoundingClientRect(),
   moveJump: ()=>{
-    ronyboySettings.y_axis += 100;
-    ronyboySettings.jumping = true;
+    ronyboySettings.y_axis += gravity;
+    if(ronyboySettings.y_axis >= 200){
+      ronyboySettings.jumping = true;
+    }
   },
   moveRight: (speed) => {
     ronyboySettings.x_axis += speed;
@@ -36,6 +38,7 @@ ronyboySettings = {
       ronyboySettings.y_axis = floorHeight;
     }
   },
+  col
   exist: () => {
     ronyboy.style.bottom = ronyboySettings.y_axis + "px";
     ronyboy.style.left = ronyboySettings.x_axis + "px";
@@ -43,6 +46,20 @@ ronyboySettings = {
     ronyboySettings.dontEscape();
   }
 };
+
+wallSettings = {
+  createWall: (wallName, wallWidth, wallHeight, wallY, wallX) =>{
+    var wall = document.createElement('div');
+    wall.classList.add('wall',wallName);
+    wall.style.width = wallWidth + "px";
+    wall.style.height = wallHeight + "px";
+    wall.style.bottom = wallY + "px";
+    wall.style.left = wallX + "px";
+    screen.appendChild(wall);
+  }
+}
+wallSettings.createWall('vermelha', 150, 100, floorHeight, 600);
+wallSettings.createWall('verde', 150, 80, floorHeight, 300);
 
 controller = {
   left: false,

@@ -24,3 +24,16 @@ html {
   position: absolute;
   transition: ease;
 }
+
+.wall{
+  position: absolute;
+  transition: ease;
+}
+
+.vermelha{
+  background: red;
+}
+
+.verde{
+  background: green;
+}
