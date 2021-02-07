@@ -9,13 +9,13 @@ var friction = 0.9;
 
 ronyboySettings = {
   jumping: true,
-  x_axis:0,
-  y_axis:300,
-  speed:3,
+  x_axis: 0,
+  y_axis: 300,
+  speed: 3,
   position: ronyboy.getBoundingClientRect(),
-  moveJump: ()=>{
+  moveJump: () => {
     ronyboySettings.y_axis += gravity;
-    if(ronyboySettings.y_axis >= 200){
+    if (ronyboySettings.y_axis >= 200) {
       ronyboySettings.jumping = true;
     }
   },
@@ -25,32 +25,50 @@ ronyboySettings = {
   moveLeft: (speed) => {
     ronyboySettings.x_axis -= speed;
   },
-  dontEscape: () =>{
-    console.log(ronyboySettings.x_axis);
-    if(ronyboySettings.x_axis <= 0){
+  dontEscape: () => {
+    if (ronyboySettings.x_axis <= 0) {
       ronyboySettings.x_axis = 0;
     }
   },
+  collision: () => {
+
+    var walls = document.querySelector(".wall");
+    var wallsTouch = walls.getBoundingClientRect();
+    // console.log(wallsrect.x, wallsrect.y, wallsrect.height, wallsrect.width);
+
+
+    var ronyTouch = ronyboy.getBoundingClientRect();
+    // console.log(rect.x, rect.y, rect.height, rect.width);
+
+    if (ronyTouch.x < wallsTouch.x + wallsTouch.width &&
+      ronyTouch.x + ronyTouch.width > wallsTouch.x &&
+      ronyTouch.y < wallsTouch.y + wallsTouch.height &&
+      ronyTouch.y + ronyTouch.height > wallsTouch.y) {
+      ronyboySettings.jumping = false;
+      ronyboySettings.y_axis = wallsTouch.height + floorHeight - ronyboySettings.speed;
+    }
+
+  },
   floorTouch: () => {
     ronyboySettings.y_axis -= gravity;
-    if(ronyboySettings.y_axis <= floorHeight){
+    if (ronyboySettings.y_axis <= floorHeight) {
       ronyboySettings.jumping = false;
       ronyboySettings.y_axis = floorHeight;
     }
   },
-  col
   exist: () => {
     ronyboy.style.bottom = ronyboySettings.y_axis + "px";
     ronyboy.style.left = ronyboySettings.x_axis + "px";
     ronyboySettings.floorTouch();
     ronyboySettings.dontEscape();
+    ronyboySettings.collision();
   }
 };
 
 wallSettings = {
-  createWall: (wallName, wallWidth, wallHeight, wallY, wallX) =>{
+  createWall: (wallName, wallWidth, wallHeight, wallY, wallX) => {
     var wall = document.createElement('div');
-    wall.classList.add('wall',wallName);
+    wall.classList.add('wall', wallName);
     wall.style.width = wallWidth + "px";
     wall.style.height = wallHeight + "px";
     wall.style.bottom = wallY + "px";
@@ -58,8 +76,7 @@ wallSettings = {
     screen.appendChild(wall);
   }
 }
-wallSettings.createWall('vermelha', 150, 100, floorHeight, 600);
-wallSettings.createWall('verde', 150, 80, floorHeight, 300);
+
 
 controller = {
   left: false,
@@ -86,11 +103,10 @@ loop = () => {
   if (controller.up && ronyboySettings.jumping == false) {
     ronyboySettings.moveJump(20);
   }
-
-  if (controller.left) {
+  if (controller.left && !ronyboySettings.collision()) {
     ronyboySettings.moveLeft(ronyboySettings.speed);
   }
-  if (controller.right) {
+  if (controller.right && !ronyboySettings.collision()) {
     ronyboySettings.moveRight(ronyboySettings.speed);
   }
   if (controller.up && ronyboySettings.jumping == false) {
@@ -104,3 +120,6 @@ loop = () => {
 window.addEventListener("keydown", controller.keyListener);
 window.addEventListener("keyup", controller.keyListener);
 window.requestAnimationFrame(loop);
+
+wallSettings.createWall('vermelha', 150, 100, floorHeight, 600);
+wallSettings.createWall('verde', 150, 80, floorHeight, 300);
